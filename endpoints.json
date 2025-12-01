@@ -1,0 +1,69 @@
+{
+    "GET /api": {
+      "description": "Serves up a json representation of all the available endpoints of the API"
+    },
+  
+    "GET /api/Users": {
+      "description": "Gets all users"
+    },
+
+    "GET /api/users/:id": {
+        "description": "Retrieves a single user by their id"
+    },
+
+    "GET /api/users/:id/sessions": {
+        "description": "Retrieves all sessions for a user by their id"
+    },
+
+    "GET /api/users/:userId/sessions/live": {
+        "description": "Retrieves the live session for a user by their id"
+    },
+
+    "GET /api/sessions/:id/requests": {
+        "description": "Retrieves all requests for a session by its id"
+    },
+
+    "GET /api/sessions/:id/comments": {
+        "description": "Retrieves all comments for a user by their id"
+    },
+
+    "GET /api/requests/:requestId/comments": {
+        "description": "Retrieves all comments for a request by its id"
+    },
+
+    "POST /api/sessions/:sessionId/requests": {
+        "description": "Creates a new request for a session by its id"
+    },
+
+    "POST /api/requests/:requestId/comments": {
+        "description": "Creates a new comment for a request by its id"
+    },
+
+    "PATCH /api/requests/:requestId/status": {
+        "description": "Updates the status of a request by its id"
+    },
+
+    "PATCH /api/requests/:requestId/votes": {
+        "description": "Updates the votes for a request by its id"
+    },
+
+    "PATCH /api/comments/:commentId/pinned": {
+        "description": "Updates the pinned status of a comment by its id"
+    },
+
+    "DELETE /api/sessions/:sessionId": {
+        "description": "Deletes a session by its id"
+    },
+
+    "DELETE /api/requests/:requestId": {
+        "description": "Deletes a request by its id"
+    },
+
+    "DELETE /api/comments/:commentId": {
+        "description": "Deletes a comment by its id"
+    },
+
+    "DELETE /api/sessions/:sessionId/requests": {
+        "description": "Deletes all requests for a session by its id"
+    }
+}
