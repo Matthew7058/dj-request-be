@@ -1,7 +1,7 @@
 {
   "name": "dj-request-be",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "listen.js",
   "scripts": {
     "test": "jest",
     "setup-dbs": "psql -f ./db/setup.sql",
