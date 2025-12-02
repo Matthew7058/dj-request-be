@@ -14,6 +14,7 @@ app.get('/api/users', usersController.getAllUsers);
 app.get('/api/users/:id', usersController.getUserById);
 app.get('/api/users/:id/sessions', sessionsController.getAllSessionsByUserId);
 app.get('/api/users/:userId/sessions/live', sessionsController.getLiveSessionByUserId);
+app.get('/api/users/:userId/sessions/live/requests', requestsController.getRequestsForLiveSessionByUserId);
 app.get('/api/sessions/:id/requests', requestsController.getRequestsBySessionId);
 app.get('/api/sessions/:id/comments', commentsController.getCommentsBySessionId);
 app.get('/api/requests/:requestId/comments', commentsController.getCommentsByRequestId);

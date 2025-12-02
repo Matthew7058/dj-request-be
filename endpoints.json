@@ -19,6 +19,10 @@
         "description": "Retrieves the live session for a user by their id"
     },
 
+    "GET /api/users/:userId/sessions/live/requests": {
+        "description": "Retrieves all the requests for the live session for a user by their id"
+    },
+
     "GET /api/sessions/:id/requests": {
         "description": "Retrieves all requests for a session by its id"
     },

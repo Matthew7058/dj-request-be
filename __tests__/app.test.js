@@ -106,6 +106,57 @@ describe('GET /api/users/:userId/sessions/live', () => {
     })
 })
 
+describe('GET /api/users/:userId/sessions/live/requests', () => {
+    it("should return a 200 status code and all requests for the user's live session", () => {
+        return request(app)
+        .get('/api/users/1/sessions/live/requests')
+        .expect(200)
+        .then(({ body: { requests }}) => {
+            expect(requests).toHaveLength(7)
+            requests.forEach((request) => {
+                expect(request.session_id).toBe(1)
+                expect(request).toHaveProperty('id')
+                expect(request).toHaveProperty('title')
+                expect(request).toHaveProperty('artist')
+                expect(request).toHaveProperty('status')
+                expect(request).toHaveProperty('votes')
+                expect(request).toHaveProperty('created_at')
+                expect(request).toHaveProperty('updated_at')
+            })
+        })
+    })
+
+    it('should return a 404 status code and an error message if the user does not exist', () => {
+        return request(app)
+        .get('/api/users/999/sessions/live/requests')
+        .expect(404)
+        .then(({ body: { msg }}) => {
+            expect(msg).toBe('User not found')
+        })
+    })
+
+    it('should return a 404 status code and an error message if the user has no live session', () => {
+        return request(app)
+        .get('/api/users/2/sessions/live/requests')
+        .expect(404)
+        .then(({ body: { msg }}) => {
+            expect(msg).toBe('User has no live session')
+        })
+    })
+
+    it('should return a 404 status code and an error message if the live session has no requests', () => {
+        return db.query('UPDATE sessions SET is_live = TRUE WHERE id = 2;')
+        .then(() => {
+            return request(app)
+            .get('/api/users/2/sessions/live/requests')
+            .expect(404)
+        })
+        .then(({ body: { msg }}) => {
+            expect(msg).toBe('Session has no requests')
+        })
+    })
+})
+
 describe('GET /api/sessions/:id/requests', () => {
     it('should return a 200 status code and all requests for the session with the given id', () => {
         return request(app)

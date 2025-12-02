@@ -4,12 +4,20 @@ const {
     updateRequestStatusById,
     updateRequestVotesById,
     deleteRequestById,
-    deleteAllRequestsInSession
+    deleteAllRequestsInSession,
+    fetchRequestsForLiveSessionByUserId
 } = require('../models/requests-model');
 
 exports.getRequestsBySessionId = (req, res, next) => {
     const { id } = req.params;
     fetchRequestsBySessionId(id)
+    .then((requests) => { res.status(200).send({ requests }); })
+    .catch(next);
+};
+
+exports.getRequestsForLiveSessionByUserId = (req, res, next) => {
+    const { userId } = req.params;
+    fetchRequestsForLiveSessionByUserId(userId)
     .then((requests) => { res.status(200).send({ requests }); })
     .catch(next);
 };

@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-const { fetchSessionById } = require('./sessions-model');
+const { fetchSessionById, fetchLiveSessionByUserId } = require('./sessions-model');
 
 exports.fetchRequestsBySessionId = (sessionId) => {
     return fetchSessionById(sessionId)
@@ -80,6 +80,18 @@ exports.updateRequestVotesById = (requestId, updateBody) => {
         );
       })
       .then((result) => result.rows[0]);
+};
+
+exports.fetchRequestsForLiveSessionByUserId = (userId) => {
+    return fetchLiveSessionByUserId(userId)
+      .then((session) => {
+        return db.query('SELECT * FROM requests WHERE session_id = $1;', [session.id]);
+      })
+      .then((result) => {
+        if (result.rows.length === 0)
+          return Promise.reject({ status: 404, msg: 'Session has no requests' });
+        return result.rows;
+      });
 };
 
 exports.deleteRequestById = (requestId) => {
