@@ -1,73 +1,107 @@
 {
-    "GET /api": {
-      "description": "Serves up a json representation of all the available endpoints of the API"
+  "GET /api": {
+    "description": "Returns this endpoints document describing all available routes, params, and bodies."
+  },
+  "GET /api/users": {
+    "description": "Returns all users (id, display_name, pin, session_count, session_limit, created_at)."
+  },
+  "GET /api/users/:id": {
+    "description": "Returns a single user by id."
+  },
+  "GET /api/users/:id/sessions": {
+    "description": "Returns all sessions for a user id."
+  },
+  "GET /api/users/:userId/sessions/live": {
+    "description": "Returns the current live session for a user id (404 if none)."
+  },
+  "GET /api/users/:userId/sessions/live/requests": {
+    "description": "Returns all requests for the user's live session; 404 if no live session or no requests."
+  },
+  "GET /api/sessions/:id/requests": {
+    "description": "Returns all requests for a session id; 404 if session missing or has no requests."
+  },
+  "GET /api/sessions/:id/comments": {
+    "description": "Returns all comments attached to requests in a session id; 404 if none."
+  },
+  "GET /api/requests/:requestId/comments": {
+    "description": "Returns all comments for a request id; 404 if none."
+  },
+  "POST /api/sessions/:sessionId/requests": {
+    "description": "Creates a new request for a session id.",
+    "requestBody": {
+      "required": ["title", "artist", "requestor_name"],
+      "optional": ["status", "approve_reject_reason", "votes"],
+      "example": {
+        "title": "Song Title",
+        "artist": "Artist Name",
+        "requestor_name": "Fan Name",
+        "status": "pending",
+        "approve_reject_reason": null,
+        "votes": 0
+      }
     },
-  
-    "GET /api/Users": {
-      "description": "Gets all users"
+    "response": "201 { request }"
+  },
+  "POST /api/requests/:requestId/comments": {
+    "description": "Creates a new comment for a request id.",
+    "requestBody": {
+      "required": ["comment", "author"],
+      "optional": ["role", "pinned"],
+      "example": {
+        "comment": "Great choice",
+        "author": "Listener",
+        "role": "user",
+        "pinned": false
+      }
     },
-
-    "GET /api/users/:id": {
-        "description": "Retrieves a single user by their id"
+    "response": "201 { comment }"
+  },
+  "PATCH /api/requests/:requestId/status": {
+    "description": "Updates the status and optional approve/reject reason for a request id.",
+    "requestBody": {
+      "required": ["status"],
+      "optional": ["approve_reject_reason"],
+      "example": {
+        "status": "approved",
+        "approve_reject_reason": "Works for the vibe"
+      }
     },
-
-    "GET /api/users/:id/sessions": {
-        "description": "Retrieves all sessions for a user by their id"
+    "response": "200 { request }"
+  },
+  "PATCH /api/requests/:requestId/votes": {
+    "description": "Increments or decrements votes for a request id by the provided delta.",
+    "requestBody": {
+      "required": ["inc_votes"],
+      "example": {
+        "inc_votes": 1
+      }
     },
-
-    "GET /api/users/:userId/sessions/live": {
-        "description": "Retrieves the live session for a user by their id"
+    "response": "200 { request }"
+  },
+  "PATCH /api/comments/:commentId/pinned": {
+    "description": "Sets the pinned boolean for a comment id.",
+    "requestBody": {
+      "required": ["pinned"],
+      "example": {
+        "pinned": true
+      }
     },
-
-    "GET /api/users/:userId/sessions/live/requests": {
-        "description": "Retrieves all the requests for the live session for a user by their id"
-    },
-
-    "GET /api/sessions/:id/requests": {
-        "description": "Retrieves all requests for a session by its id"
-    },
-
-    "GET /api/sessions/:id/comments": {
-        "description": "Retrieves all comments for a user by their id"
-    },
-
-    "GET /api/requests/:requestId/comments": {
-        "description": "Retrieves all comments for a request by its id"
-    },
-
-    "POST /api/sessions/:sessionId/requests": {
-        "description": "Creates a new request for a session by its id"
-    },
-
-    "POST /api/requests/:requestId/comments": {
-        "description": "Creates a new comment for a request by its id"
-    },
-
-    "PATCH /api/requests/:requestId/status": {
-        "description": "Updates the status of a request by its id"
-    },
-
-    "PATCH /api/requests/:requestId/votes": {
-        "description": "Updates the votes for a request by its id"
-    },
-
-    "PATCH /api/comments/:commentId/pinned": {
-        "description": "Updates the pinned status of a comment by its id"
-    },
-
-    "DELETE /api/sessions/:sessionId": {
-        "description": "Deletes a session by its id"
-    },
-
-    "DELETE /api/requests/:requestId": {
-        "description": "Deletes a request by its id"
-    },
-
-    "DELETE /api/comments/:commentId": {
-        "description": "Deletes a comment by its id"
-    },
-
-    "DELETE /api/sessions/:sessionId/requests": {
-        "description": "Deletes all requests for a session by its id"
-    }
+    "response": "200 { comment }"
+  },
+  "DELETE /api/sessions/:sessionId": {
+    "description": "Deletes a session id and cascades to its requests and comments.",
+    "response": "204 no content"
+  },
+  "DELETE /api/requests/:requestId": {
+    "description": "Deletes a request id and its comments.",
+    "response": "204 no content"
+  },
+  "DELETE /api/comments/:commentId": {
+    "description": "Deletes a single comment id.",
+    "response": "204 no content"
+  },
+  "DELETE /api/sessions/:sessionId/requests": {
+    "description": "Deletes all requests (and related comments) for a session id.",
+    "response": "204 no content"
+  }
 }
