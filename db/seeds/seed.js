@@ -38,6 +38,7 @@ const seed = ({ usersData, sessionsData, requestsData, commentsData }) => {
                 session_id INTEGER REFERENCES sessions(id),
                 title VARCHAR(255) NOT NULL,
                 artist VARCHAR(255) NOT NULL,
+                requestor_name VARCHAR(255) NOT NULL,
                 status VARCHAR(255) DEFAULT 'pending',
                 approve_reject_reason TEXT,
                 votes INTEGER DEFAULT 0,
@@ -76,8 +77,8 @@ const seed = ({ usersData, sessionsData, requestsData, commentsData }) => {
       })
       .then(() => {
         const insetRequestsQuery = format(
-            `INSERT INTO requests (session_id, title, artist, status, approve_reject_reason, votes) VALUES %L RETURNING *;`,
-            requestsData.map(({ session_id, title, artist, status, approve_reject_reason, votes }) => [session_id, title, artist, status, approve_reject_reason, votes])
+            `INSERT INTO requests (session_id, title, artist, requestor_name, status, approve_reject_reason, votes) VALUES %L RETURNING *;`,
+            requestsData.map(({ session_id, title, artist, requestor_name, status, approve_reject_reason, votes }) => [session_id, title, artist, requestor_name, status, approve_reject_reason, votes])
         )
         return db.query(insetRequestsQuery)
       })

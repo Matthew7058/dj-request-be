@@ -118,6 +118,7 @@ describe('GET /api/users/:userId/sessions/live/requests', () => {
                 expect(request).toHaveProperty('id')
                 expect(request).toHaveProperty('title')
                 expect(request).toHaveProperty('artist')
+                expect(request).toHaveProperty('requestor_name')
                 expect(request).toHaveProperty('status')
                 expect(request).toHaveProperty('votes')
                 expect(request).toHaveProperty('created_at')
@@ -164,6 +165,9 @@ describe('GET /api/sessions/:id/requests', () => {
         .expect(200)
         .then(({ body: { requests }}) => {
             expect(requests).toHaveLength(7)
+            requests.forEach((request) => {
+                expect(request).toHaveProperty('requestor_name')
+            })
         })
     })
     it('should return a 404 status code and an error message if the session does not exist', () => {
@@ -261,7 +265,7 @@ describe('GET /api/requests/:requestId/comments', () => {
 
 describe('POST /api/sessions/:sessionId/requests', () => {
     it('should create a new request for the given session', () => {
-        const newRequest = { title: 'New Track', artist: 'New Artist' }
+        const newRequest = { title: 'New Track', artist: 'New Artist', requestor_name: 'New Requestor' }
 
         return request(app)
         .post('/api/sessions/1/requests')
@@ -272,6 +276,7 @@ describe('POST /api/sessions/:sessionId/requests', () => {
             expect(request).toMatchObject({
                 title: 'New Track',
                 artist: 'New Artist',
+                requestor_name: 'New Requestor',
                 status: 'pending',
                 votes: 0,
                 approve_reject_reason: null
@@ -285,7 +290,7 @@ describe('POST /api/sessions/:sessionId/requests', () => {
     it('should return a 404 if the session does not exist', () => {
         return request(app)
         .post('/api/sessions/999/requests')
-        .send({ title: 'New Track', artist: 'New Artist' })
+        .send({ title: 'New Track', artist: 'New Artist', requestor_name: 'New Requestor' })
         .expect(404)
         .then(({ body: { msg }}) => {
             expect(msg).toBe('Session not found')
@@ -295,7 +300,7 @@ describe('POST /api/sessions/:sessionId/requests', () => {
     it('should return a 400 if the request body is invalid', () => {
         return request(app)
         .post('/api/sessions/1/requests')
-        .send({ title: 'Missing artist' })
+        .send({ title: 'Missing requestor', artist: 'New Artist' })
         .expect(400)
         .then(({ body: { msg }}) => {
             expect(msg).toBe('Invalid request body')

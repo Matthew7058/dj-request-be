@@ -24,8 +24,8 @@ exports.fetchRequestById = (requestId) => {
 };
 
 exports.insertRequest = (sessionId, requestBody) => {
-    const { title, artist, status, approve_reject_reason, votes } = requestBody;
-    if (!title || !artist)
+    const { title, artist, requestor_name, status, approve_reject_reason, votes } = requestBody;
+    if (!title || !artist || !requestor_name)
       return Promise.reject({ status: 400, msg: 'Invalid request body' });
 
     const statusValue = status !== undefined ? status : 'pending';
@@ -34,10 +34,10 @@ exports.insertRequest = (sessionId, requestBody) => {
     return fetchSessionById(sessionId)
       .then(() => {
         return db.query(
-          `INSERT INTO requests (session_id, title, artist, status, approve_reject_reason, votes)
-            VALUES ($1, $2, $3, $4, $5, $6)
+          `INSERT INTO requests (session_id, title, artist, requestor_name, status, approve_reject_reason, votes)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *;`,
-          [sessionId, title, artist, statusValue, approve_reject_reason || null, votesValue]
+          [sessionId, title, artist, requestor_name, statusValue, approve_reject_reason || null, votesValue]
         );
       })
       .then((result) => result.rows[0]);
@@ -48,7 +48,7 @@ exports.updateRequestStatusById = (requestId, updateBody) => {
     if (!status || typeof status !== 'string')
       return Promise.reject({ status: 400, msg: 'Invalid status update' });
 
-    return fetchRequestById(requestId)
+    return exports.fetchRequestById(requestId)
       .then(() => {
         return db.query(
           `UPDATE requests
@@ -68,7 +68,7 @@ exports.updateRequestVotesById = (requestId, updateBody) => {
     if (inc_votes === undefined || typeof inc_votes !== 'number')
       return Promise.reject({ status: 400, msg: 'Invalid vote increment' });
 
-    return fetchRequestById(requestId)
+    return exports.fetchRequestById(requestId)
       .then(() => {
         return db.query(
           `UPDATE requests
@@ -95,7 +95,7 @@ exports.fetchRequestsForLiveSessionByUserId = (userId) => {
 };
 
 exports.deleteRequestById = (requestId) => {
-    return fetchRequestById(requestId)
+    return exports.fetchRequestById(requestId)
       .then(() => {
         return db.query('DELETE FROM comments WHERE request_id = $1;', [requestId]);
       })
@@ -106,7 +106,7 @@ exports.deleteRequestById = (requestId) => {
 };
 
 exports.deleteAllRequestsInSession = (sessionId) => {
-    return fetchRequestsBySessionId(sessionId)
+    return exports.fetchRequestsBySessionId(sessionId)
       .then(() => {
         return db.query(
           `DELETE FROM comments

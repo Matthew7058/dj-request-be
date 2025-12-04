@@ -34,7 +34,7 @@ exports.fetchSessionById = (sessionId) => {
 };
 
 exports.deleteSessionById = (sessionId) => {
-    return fetchSessionById(sessionId)
+    return exports.fetchSessionById(sessionId)
       .then(() => {
         return db.query(
           `DELETE FROM comments
